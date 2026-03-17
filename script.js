@@ -1,5 +1,5 @@
 function setup() {
-    createCanvas(400, 400);
+    createCanvas(windowWidth, windowHeight);
 }
 
 class Player {
@@ -53,6 +53,5 @@ const player1 = new Player("Jeff", 0, 0, 100);
 const enemy1 = new Enemy("Goblin", 10, 10, 50);
 
 function draw() {
-    background(220);
-    // TODO: render player and enemy here
+    background(0);
 }
