@@ -1,7 +1,8 @@
+function setup() {
+    createCanvas(windowWidth, windowHeight);
+}
 
-
-
-class Player { 
+class Player {
     constructor(name, x, y, health) {
         this.name = name;
         this.score = 0;
@@ -51,5 +52,6 @@ class Enemy {
 const player1 = new Player("Jeff", 0, 0, 100);
 const enemy1 = new Enemy("Goblin", 10, 10, 50);
 
-console.log(player1);
-console.log(enemy1);
+function draw() {
+    background(0);
+}
