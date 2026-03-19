@@ -2,14 +2,18 @@
 let playersArr = [];
 let enemiesArr = [];
 
-
+let enemiesnum = 500; // Number of enemies to create
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
     
     // Initialize players and enemies
     playersArr.push(new Player("Jeff", 100, 100, 100, 20));
-    enemiesArr.push(new Enemy("Goblin", 300, 200, 50, 10));
+    for(let i = 0; i < enemiesnum; i++) {
+        let type = random() < 0.5 ? "Orc" : "Goblin";
+        enemiesArr.push(new Enemy(type, random(50, windowWidth-50), random(50, windowHeight-50), 80, 15));
+    }
+
 }
 
 
@@ -87,18 +91,20 @@ function draw() {
     background(0);
     //console.log(playersArr, enemiesArr);
 
-    // Handle player movement with arrow keys (continuous)
-    if (keyIsDown(LEFT_ARROW) && playersArr[0].x > 10) { // Keep player on screen
-        playersArr[0].move(-5, 0);
-    }
-    if (keyIsDown(RIGHT_ARROW) && playersArr[0].x < windowWidth - 10) {
-        playersArr[0].move(5, 0);
-    }
-    if (keyIsDown(UP_ARROW) && playersArr[0].y > 10) {
-        playersArr[0].move(0, -5);
-    }
-    if (keyIsDown(DOWN_ARROW) && playersArr[0].y < windowHeight - 10) {
-        playersArr[0].move(0, 5);
+    // Handle player movement with arrow keys (continuous) - only if player exists
+    if (playersArr.length > 0) {
+        if (keyIsDown(LEFT_ARROW) && playersArr[0].x > 10) { // Keep player on screen
+            playersArr[0].move(-5, 0);
+        }
+        if (keyIsDown(RIGHT_ARROW) && playersArr[0].x < windowWidth - 10) {
+            playersArr[0].move(5, 0);
+        }
+        if (keyIsDown(UP_ARROW) && playersArr[0].y > 10) {
+            playersArr[0].move(0, -5);
+        }
+        if (keyIsDown(DOWN_ARROW) && playersArr[0].y < windowHeight - 10) {
+            playersArr[0].move(0, 5);
+        }
     }
 
     //Drawing the players and enemys as circles
@@ -115,16 +121,20 @@ function draw() {
         }
     }
 
-    // Check for collisions and handle attacks
-    for(let i = 0; i < playersArr.length; i++) {
-        for(let j = 0; j < enemiesArr.length; j++) {
+    // Check for collisions and handle attacks (loop backwards to safely remove elements)
+    for(let i = playersArr.length - 1; i >= 0; i--) {
+        for(let j = enemiesArr.length - 1; j >= 0; j--) {
             if (dist(playersArr[i].x, playersArr[i].y, enemiesArr[j].x, enemiesArr[j].y) < 20) {
                 playersArr[i].attack(enemiesArr[j]);
+                enemiesArr[j].attack(playersArr[i]);
                 if (enemiesArr[j].health === 0) {
-                    enemiesArr.splice(j, 1); // Remove defeated enemy
+                    enemiesArr.splice(j, 1);
                 }
                 if (playersArr[i].health === 0) {
-                    playersArr.splice(i, 1); // Remove defeated player
+                    playersArr.splice(i, 1);
+                    if(playersArr.length === 0) {
+                        break; // Break inner loop since player is removed
+                    }
                 }
             }
         }
