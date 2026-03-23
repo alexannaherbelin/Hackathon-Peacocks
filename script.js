@@ -1,26 +1,15 @@
 
 let playersArr = [];
 let enemiesArr = [];
-let hitboxSize = 20; // Size of the hitbox for collision detection
-let jumpingInterval;
 
-let enemiesnum = 2; // Number of enemies to create
+let enemiesnum = 500; // Number of enemies to create
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    
-    // Initialize players and enemies
-    playersArr.push(new Player("Albinson", 100, 100, 100, 20, 20, false, false));
-    for(let i = 0; i < enemiesnum; i++) {
-        let type = random() < 0.5 ? "Orc" : "Goblin";
-        enemiesArr.push(new Enemy(type, random(50, windowWidth-50), random(50, windowHeight-50), 80, 15));
-    }
-
-}
 
 
 
-class Player {
+/* class Player {
     constructor(name, x, y, health, power, hitboxSize, ducking, jumping) {
         this.name = name;
         this.score = 0;
@@ -113,7 +102,7 @@ class Enemy {
     }
 }
 
-
+*/
 
 
 function draw() {
@@ -136,40 +125,6 @@ function draw() {
             playersArr[0].duck();
         }
     }
-
-    //Drawing the players and enemys as circles
-    for(let i = 0; i < playersArr.length; i++) {
-        if (playersArr[i].health > 0) {
-            fill(0, 255, 0); //green for players
-            ellipse(playersArr[i].x, playersArr[i].y, playersArr[i].hitboxSize, playersArr[i].hitboxSize);
-        }
-    }
-    for(let i = 0; i < enemiesArr.length; i++) {
-        if (enemiesArr[i].health > 0) {
-            fill(255, 0, 0); //red for enemies
-            ellipse(enemiesArr[i].x, enemiesArr[i].y, 20, 20);
-        }
-    }
-
-    // Check for collisions and handle attacks (loop backwards to safely remove elements)
-    /*for(let i = playersArr.length - 1; i >= 0; i--) {
-        for(let j = enemiesArr.length - 1; j >= 0; j--) {
-            if (dist(playersArr[i].x, playersArr[i].y, enemiesArr[j].x, enemiesArr[j].y) < 20) {
-                playersArr[i].attack(enemiesArr[j]);
-                enemiesArr[j].attack(playersArr[i]);
-                if (enemiesArr[j].health === 0) {
-                    enemiesArr.splice(j, 1);
-                }
-                if (playersArr[i].health === 0) {
-                    playersArr.splice(i, 1);
-                    if(playersArr.length === 0) {
-                        break; // Break inner loop since player is removed
-                    }
-                }
-            }
-        }
-    }*/
-    console.log(playersArr[0].ducking);
 }
 
 function keyPressed() {
