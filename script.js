@@ -2,12 +2,11 @@
 let playersArr = [];
 let enemiesArr = [];
 
-let enemiesnum = 500; // Number of enemies to create
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
-
+}
 
 /* class Player {
     constructor(name, x, y, health, power, hitboxSize, ducking, jumping) {
@@ -134,8 +133,5 @@ function keyPressed() {
     }
 }
 function keyReleased() {
-    if (keyCode === DOWN_ARROW) {
-        playersArr[0].ducking = false;
-        playersArr[0].hitboxSize = 20; // Reset hitbox size when not ducking
-    }
+
 }
