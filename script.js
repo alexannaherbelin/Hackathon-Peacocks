@@ -61,6 +61,22 @@ class Tile {
     }
 }
 
+class Player {
+    constructor() {
+        this.x = 0;
+        this.y = 0;
+        this.size = tilesize * 0.8;
+    }
+
+    display() {
+        fill(0, 255, 0);
+        rect(this.x, this.y, this.size, this.size);
+    }
+    gravity() {
+        this.y -= 5;
+    }
+}
+
 function draw() {
     background(0);
 
