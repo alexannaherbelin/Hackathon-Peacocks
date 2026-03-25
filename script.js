@@ -29,8 +29,24 @@ let level_1 = [
 [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]];
 
+let springArr = [];
+let crateArr = [];
 let tilesArr = [];
 let tilesize = 35;
+
+class Crate {
+    constructor(x, y, xSize, ySize) {
+        this.x = x;
+        this.y = y;
+        this.xSize = xSize;
+        this.ySize = ySize;
+    }
+
+    display() {
+        fill(0, 0, 255); //Blue fill for objects
+        rect(this.x, this.y, this.xSize * tilesize, this.ySize * tilesize);
+    }
+}
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -41,6 +57,12 @@ function setup() {
             tilesArr.push(new Tile(x, y, current_level[y][x]));
         }
     }
+
+    let crate1 = new Crate(560, 175, 2, 2);
+    crateArr.push(crate1);
+
+    let spring1 = new Spring(350, 175 + 2*tilesize);
+    springArr.push(spring1);
 }
 
 class Tile {
@@ -77,10 +99,40 @@ class Player {
     }
 }
 
+class Spring {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = tilesize * 0.25;
+    }
+
+    display() {
+        fill(255, 0, 255);
+        rect(this.x, this.y, 4 * this.size, this.size);
+    }
+
+    spring(){
+
+    }
+}
+
+
 function draw() {
     background(0);
 
     for (let tile of tilesArr) {
         tile.display();
+    }
+
+    if(crateArr.length > 0) {
+        for(let i = 0; i < crateArr.length; i++) {
+            crateArr[i].display();
+        }
+    }
+
+    if(springArr.length > 0) {
+        for(let i = 0; i < springArr.length; i++) {
+            springArr[i].display();
+        }
     }
 }
