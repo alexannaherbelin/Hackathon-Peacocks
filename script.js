@@ -18,8 +18,8 @@ class Tile {
 
 class Player {
     constructor() {
-        this.x = 0;
-        this.y = 0;
+        this.x = 3 * tilesize;
+        this.y = 25 * tilesize;
         this.size = tilesize * 0.8;
 
         this.velocity = createVector(0, 0);
@@ -35,6 +35,90 @@ class Player {
         this.velocity.add(this.gravity);
         this.x += this.velocity.x;
         this.y += this.velocity.y;
+    }
+
+    collide(tiles,crates) {
+        this.onGround = false;
+
+        for (let tile of tiles) {
+            if (tile.isTile === 1) {
+
+                if (
+                    this.x < tile.x + tile.size &&
+                    this.x + this.size > tile.x &&
+                    this.y < tile.y + tile.size &&
+                    this.y + this.size > tile.y
+                ) {
+                    
+                    if (this.velocity.y > 0 && this.y + this.size - this.velocity.y <= tile.y) {
+                        this.y = tile.y - this.size;
+                        this.velocity.y = 0;
+                        this.onGround = true;
+                    }
+
+                    else if (this.velocity.y < 0 && this.y - this.velocity.y >= tile.y + tile.size) {
+                        this.y = tile.y + tile.size;
+                        this.velocity.y = 0;
+                    }
+
+                    else if (this.velocity.x > 0) {
+                        this.x = tile.x - this.size;
+                        this.velocity.x = 0;
+                    }
+
+                    else if (this.velocity.x < 0) {
+                        this.x = tile.x + tile.size;
+                        this.velocity.x = 0;
+                    }
+                }
+            }
+        }
+        for (let crate of crates) {
+            if (
+                this.x < crate.x + crate.xSize * tilesize &&
+                this.x + this.size > crate.x &&
+                this.y < crate.y + crate.ySize * tilesize &&
+                this.y + this.size > crate.y
+            ) {
+                
+                if (this.velocity.y > 0 && this.y + this.size - this.velocity.y <= crate.y) {
+                    this.y = crate.y - this.size;
+                    this.velocity.y = 0;
+                    this.onGround = true;
+                }
+
+                else if (this.velocity.y < 0 && this.y - this.velocity.y >= crate.y + crate.ySize * tilesize) {
+                    this.y = crate.y + crate.ySize * tilesize;
+                    this.velocity.y = 0;
+                }
+
+                else if (this.velocity.x > 0) {
+                    this.x = crate.x - this.size;
+                    this.velocity.x = 0;
+                }
+
+                else if (this.velocity.x < 0) {
+                    this.x = crate.x + crate.xSize * tilesize;
+                    this.velocity.x = 0;
+                }
+            }
+        }
+    }
+}
+
+class Crate {
+    constructor(x, y, xSize, ySize) {
+        this.x = x;
+        this.y = y;
+        this.xSize = xSize;
+        this.ySize = ySize;
+        this.velocity = createVector(0, 0);
+        this.friction = createVector(0, 0);
+    }
+
+    display() {
+        fill(0, 0, 255); //Blue fill for objects
+        rect(this.x, this.y, this.xSize * tilesize, this.ySize * tilesize);
     }
 
     collide(tiles) {
@@ -205,15 +289,16 @@ function draw() {
         player.velocity.y -= 8;
     }
     if (keyIsDown(LEFT_ARROW) === true) {
-        player.x -= 5;
-    }
-    if (keyIsDown(RIGHT_ARROW) === true) {
-        player.x += 5;
+        player.velocity.x = -5;
+    }else if (keyIsDown(RIGHT_ARROW) === true) {
+        player.velocity.x = 5;
+    }else {
+        player.velocity.x = 0;
     }
 
     player.display();
-    player.collide(tilesArr);
     player.applyGravity();
+    player.collide(tilesArr, crateArr);
     springArr.forEach(spring => spring.spring());
 
     if(crateArr.length > 0) {
