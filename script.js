@@ -90,6 +90,22 @@ class Crate {
     }
 }
 
+class Door{
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.xSize = tilesize;
+        this.ySize = tilesize * 3;
+    }
+
+    display() {
+        fill(255, 255, 0); // Yellow fill for doors
+        rect(this.x, this.y, this.xSize, this.ySize);
+    }
+    //openDoor() {
+    //    if(winCondition)
+}
+
 class Spring {
     constructor(x, y) {
         this.x = x;
@@ -103,7 +119,16 @@ class Spring {
     }
 
     spring(){
+        if(player.x < this.x + 4*this.size &&
+           player.x + player.size > this.x &&
+           player.y < this.y + this.size &&
+           player.y + player.size > this.y &&
+           player.velocity.y > 0 &&
+           player.y + player.size - player.velocity.y <= this.y) {
 
+            player.y = this.y - player.size;
+            player.velocity.y = -10; // launch upward
+        }
     }
 }
 
@@ -138,6 +163,7 @@ let level_1 = [
 [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]];
 
+let doorsArr = [];
 let tilesArr = [];
 let springArr = [];
 let crateArr = [];
@@ -159,8 +185,13 @@ function setup() {
     let crate1 = new Crate(560, 175, 2, 2);
     crateArr.push(crate1);
 
-    let spring1 = new Spring(350, 175 + 2*tilesize);
+    let spring1 = new Spring(910, 385 + 2*tilesize);
     springArr.push(spring1);
+    let spring2 = new Spring(350, 175 + 2*tilesize);
+    springArr.push(spring2);
+
+    let door1 = new Door(1225, 175 - tilesize);
+    doorsArr.push(door1);
 }
 
 function draw() {
@@ -183,6 +214,7 @@ function draw() {
     player.display();
     player.collide(tilesArr);
     player.applyGravity();
+    springArr.forEach(spring => spring.spring());
 
     if(crateArr.length > 0) {
         for(let i = 0; i < crateArr.length; i++) {
@@ -193,6 +225,12 @@ function draw() {
     if(springArr.length > 0) {
         for(let i = 0; i < springArr.length; i++) {
             springArr[i].display();
+        }
+    }
+
+    if(doorsArr.length > 0) {
+        for(let i = 0; i < doorsArr.length; i++) {
+            doorsArr[i].display();
         }
     }
 }
