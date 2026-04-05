@@ -186,20 +186,6 @@ class Crate {
     }
 }
 
-class Crate {
-    constructor(x, y, xSize, ySize) {
-        this.x = x;
-        this.y = y;
-        this.xSize = xSize;
-        this.ySize = ySize;
-    }
-
-    display() {
-        fill(0, 0, 255); //Blue fill for objects
-        rect(this.x, this.y, this.xSize * tilesize, this.ySize * tilesize);
-    }
-}
-
 class Door{
     constructor(x, y) {
         this.x = x;
