@@ -134,6 +134,12 @@ class Crate {
         this.velocity.add(this.gravity);
     }
 
+    applyFriction() {
+        if (this.onGround) {
+            this.velocity.x *= 0.8; // Adjust the friction coefficient as needed
+        }
+    }
+
     collide(tiles) {
         this.onGround = false;
 
@@ -194,17 +200,16 @@ class Door{
         fill(255, 255, 0); // Yellow fill for doors
         rect(this.x, this.y, this.xSize, this.ySize);
     }
-    /*openDoor() {
-        if(pressurePlateActivated) {
+    openDoor() {
+        if(pressurePlateArr.every(plate => plate.activated)) {
             if(player.x <= this.x + this.xSize &&
                player.x + player.size >= this.x &&
                player.y <= this.y + this.ySize &&
                player.y + player.size >= this.y ) {
-                console.log("Player has reached the door at", this.x, this.y);
-                
-            }
+                console.log("Player has reached the door and completed the level!");
+            }   
         }
-    }*/
+    }
 }
 
 class Spring {
@@ -220,13 +225,51 @@ class Spring {
     }
 
     spring(){
-        console.log("Spring function called for spring at", this.x, this.y);
+        //console.log("Spring function called for spring at", this.x, this.y);
         if(player.x <= this.x + 4 * this.size &&
            player.x + player.size >= this.x &&
            player.y <= this.y + this.size &&
            player.y + player.size >= this.y) {
             console.log("Player is on the spring at", this.x, this.y);
             player.velocity.y = -10; // Adjust the jump strength as needed
+        }
+        if(crateArr.length > 0) {
+            crateArr.forEach(crate => {
+                if(crate.x <= this.x + 4 * this.size &&
+                   crate.x + crate.size >= this.x &&
+                   crate.y <= this.y + this.size &&
+                   crate.y + crate.size >= this.y) {
+                    console.log("Crate is on the spring at", this.x, this.y);
+                    crate.velocity.y = -10; // Adjust the jump strength as needed
+                }
+            });
+        }
+    }
+}
+
+class PressurePlate {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.xsize = tilesize * 1;
+        this.ysize = tilesize * 0.5;
+        this.activated = false;
+    }
+
+    display() {
+        fill(this.activated ? 0 : 255, 255, 0);
+        rect(this.x, this.y, this.xsize, this.ysize);
+    }
+
+    checkActivation() {
+        if(crate1.x <= this.x + this.xsize &&
+           crate1.x + crate1.size >= this.x &&
+           crate1.y <= this.y + this.ysize &&
+           crate1.y + crate1.size >= this.y) {
+            console.log("Crate has activated the pressure plate at", this.x, this.y);
+            this.activated = true;
+        }else{
+            this.activated = false;
         }
     }
 }
@@ -239,7 +282,7 @@ let level_1 = [
 [1,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-[1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1],
+[1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1],
 [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
@@ -266,10 +309,12 @@ let doorsArr = [];
 let tilesArr = [];
 let springArr = [];
 let crateArr = [];
+let pressurePlateArr = [];
 let tilesize = 35;
 let gravity = 0.13;
 let player;
 let current_level;
+let crate1;
 
 
 function setup() {
@@ -283,7 +328,7 @@ function setup() {
         }
     }
 
-    let crate1 = new Crate(560, 175, 2*tilesize);
+    crate1 = new Crate(560, 175, 2*tilesize);
     crateArr.push(crate1);
 
     let spring1 = new Spring(910, 385 + 2*tilesize);
@@ -293,6 +338,9 @@ function setup() {
 
     let door1 = new Door(1225, 175 - tilesize);
     doorsArr.push(door1);
+
+    let pressurePlate1 = new PressurePlate(350- 8*tilesize, 175 - tilesize);
+    pressurePlateArr.push(pressurePlate1);
 }
 
 
@@ -306,7 +354,7 @@ function draw() {
     }
 
     if (keyIsDown(UP_ARROW) === true && player.onGround === true) {
-        player.velocity.y -= 8;
+        player.velocity.y -= 6;
     }
     if (keyIsDown(LEFT_ARROW) === true) {
         player.velocity.x = -5;
@@ -325,7 +373,26 @@ function draw() {
     });
     springArr.forEach(spring => spring.spring());
     //doorsArr.forEach(door => door.openDoor());
-    if(crateArr.length > 0) {crateArr.forEach(crate => crate.display());}
+    if(crateArr.length > 0) {
+        crateArr.forEach(crate => crate.display());
+        crateArr.forEach(crate => crate.applyFriction());
+    }
     if(springArr.length > 0) {springArr.forEach(spring => spring.display());}
     if(doorsArr.length > 0) {doorsArr.forEach(door => door.display());}
+    if(pressurePlateArr.length > 0) {
+        pressurePlateArr.forEach(plate => {
+            plate.display();
+            plate.checkActivation();
+            if(pressurePlateArr.every(plate => plate.activated)) {
+                doorsArr.forEach(door => {
+                    if(player.x <= door.x + door.xSize &&
+                       player.x + player.size >= door.x &&
+                       player.y <= door.y + door.ySize &&
+                       player.y + player.size >= door.y ) {
+                        console.log("Player has reached the door and completed the level!");
+                    }
+                });
+            }
+        });
+    }
 }
